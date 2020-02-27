@@ -1,3 +1,4 @@
+#sudo apt-get install jq
 
 read -p 'Enter Name of Contract: ' contract_name
 read -p 'Enter Start DTG  (ISO8601): ' start_dtg
