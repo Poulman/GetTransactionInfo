@@ -8,11 +8,13 @@ let cpu
 let net
 let limit=10
 
-cpu="$(curl -X GET "https://junglehistory.cryptolions.io/v2/history/get_actions?filter=$contract_name%3A%2A&limit=$limit&after=$start_dtg&before=$end_dtg" -H "accept: applicat$
+cpu="$(curl -X GET "https://junglehistory.cryptolions.io/v2/history/get_actions?filter=$contract_name%3A%2A&limit=$limit&after=$start_dtg&before=$end_dtg" -H "accept: application/json" | jq '.actions[].cpu_usage_us')"
 
-net="$(curl -X GET "https://junglehistory.cryptolions.io/v2/history/get_actions?filter=$contract_name%3A%2A&limit=$limit&after=$start_dtg&before=$end_dtg" -H "accept: applicat$
 
-curl -X GET "https://junglehistory.cryptolions.io/v2/history/get_actions?filter=$contract_name%3A%2A&limit=$limit&after=$start_dtg&before=$end_dtg" -H "accept: application/jso$
+net="$(curl -X GET "https://junglehistory.cryptolions.io/v2/history/get_actions?filter=$contract_name%3A%2A&limit=$limit&after=$start_dtg&before=$end_dtg" -H "accept: application/json" "accept: application/json"
+
+curl -X GET "https://junglehistory.cryptolions.io/v2/history/get_actions?filter=$contract_name%3A%2A&limit=$limit&after=$start_dtg&before=$end_dtg" -H "accept: application/json" >> transaction.txt
+
 echo "_______________________________________________"
 printf "Total size of all transaction bodies(count of bytes present in a transaction): "; wc -c transaction.txt
 
