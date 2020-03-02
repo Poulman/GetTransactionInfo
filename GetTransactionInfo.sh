@@ -6,17 +6,27 @@ read -p 'Enter End DTG  (ISO8601):'  end_dtg
 
 let cpu
 let net
-let limit=10
+let limit=100000000
 
-cpu="$(curl -X GET "https://junglehistory.cryptolions.io/v2/history/get_actions?filter=$contract_name%3A%2A&limit=$limit&after=$start_dtg&before=$end_dtg" -H "accept: application/json" | jq '.actions[].cpu_usage_us')"
+end="$(date -d "$end_dtg" +"%H:%M:%S %Y-%m-%d")"
+start="$(date -d "$start_dtg" +"%H:%M:%S %Y-%m-%d")"
 
+while [ "$start" != "$end" ]; do
+        
+        start1="$(date -d"$start + 30 minutes" +"%H:%M:%S %Y-%m-%d")"
+        a="$(date -d "$start" +"%Y-%m-%dT%H:%M:%S")"
+        b="$(date -d "$start1" +"%Y-%m-%dT%H:%M:%S")"
+        
+        #curl -X GET "https://junglehistory.cryptolions.io/v2/history/get_actions?filter=$contract_name%3A%2A&limit=$limit&after=$a&before=$b| jq '.actions[]'"
+        get_transaction="$(curl -X GET "https://junglehistory.cryptolions.io/v2/history/get_actions?filter=$contract_name%3A%2A&limit=$limit&after=$a&before=$b" -H "accept: application/json")"
+        
+        cpu+="$(echo $get_transaction | jq '.actions[].cpu_usage_us')"
+        net+="$(echo $get_transaction | jq '.actions[].net_usage_words')"
+        len_transaction+="$(echo $get_transaction | jq '.actions[].data')"
 
-net="$(curl -X GET "https://junglehistory.cryptolions.io/v2/history/get_actions?filter=$contract_name%3A%2A&limit=$limit&after=$start_dtg&before=$end_dtg" -H "accept: application/json" "accept: application/json"
-
-curl -X GET "https://junglehistory.cryptolions.io/v2/history/get_actions?filter=$contract_name%3A%2A&limit=$limit&after=$start_dtg&before=$end_dtg" -H "accept: application/json" >> transaction.txt
-
-echo "_______________________________________________"
-printf "Total size of all transaction bodies(count of bytes present in a transaction): "; wc -c transaction.txt
+        echo "_______________________________________________"
+        start="$(date -d"$start + 30 minutes" +"%H:%M:%S %Y-%m-%d")"
+done
 
 cpu_sum=0
 for i in ${cpu[@]}; do
