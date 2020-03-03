@@ -9,17 +9,25 @@ read -p 'Enter End DTG  (ISO8601):'  end_dtg
 #start_dtg=2020-01-28T20:28:56
 #end_dtg=2020-02-01T23:28:56
 
-end="$(date -d "$end_dtg" +"%H:%M:%S %Y-%m-%d")"
-start="$(date -d "$start_dtg" +"%H:%M:%S %Y-%m-%d")"
+end="$(date -d "$end_dtg" "+%s")"
+start="$(date -d "$start_dtg" "+%s")"
 
-limit=10000000000
+steap=3800
+#30 min=1800   1 hour=3800    1 day= 86400
 
-while [ "$start" != "$end" ]; do
-        start1="$(date -d"$start + 30 minutes" +"%H:%M:%S %Y-%m-%d")"
-        a="$(date -d "$start" +"%Y-%m-%dT%H:%M:%S")"
-        b="$(date -d "$start1" +"%Y-%m-%dT%H:%M:%S")"
+limit=1000000000
 
-get_transaction="$(curl -X GET "https://ore.eosusa.news/v2/history/get_actions?limit=$limit&after=$a&before=$b" -H "accept: application/json")"
+echo $start
+echo $end
+
+while [[ "$start" < "$end" ]]; do
+
+        start1="$(($start + $steap))"
+        a="$(date -d @"$start" +"%Y-%m-%dT%H:%M:%S")"
+        b="$(date -d @"$start1" +"%Y-%m-%dT%H:%M:%S")"
+
+#get_transaction="$(curl -X GET "https://jungle.eossweden.org/v2/history/get_actions?limit=$limit&filter=$contract_name%3A%2A&after=$a&before=$b" -H "accept: application/json")"
+get_transaction="$(curl -X GET "https://api.eossweden.org/v2/history/get_actions?filter=ilovekolobok%3A%2A&after=$a&before=$b" -H "accept: application/json")"
 
 cpu="$(echo $get_transaction | jq '.actions[].cpu_usage_us')"
         for i in ${cpu[@]}; do
@@ -37,7 +45,7 @@ len_transaction="$(echo $get_transaction | jq '.actions[].data')"
         done
 
 echo "_______________________________________________"
-start="$(date -d"$start + 30 minutes" +"%H:%M:%S %Y-%m-%d")"
+start="$(($start + $steap))"
 done
 
 echo "Total CPU: $cpu_sum"
