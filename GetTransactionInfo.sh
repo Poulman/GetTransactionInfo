@@ -9,6 +9,18 @@ read -p 'Enter End DTG  (ISO8601):'  end_dtg
 #start_dtg=2020-01-28T20:28:56
 #end_dtg=2020-02-01T23:28:56
 
+EOSsweden="https://api.eossweden.org/v2/history/get_actions?"
+EOSmainnet="https://mainnet.eosn.io/v2/history/get_actions?"
+Wax="https://api.waxsweden.org/v2/history/get_actions?"
+Telos="https://mainnet.telosusa.io/v2/history/get_actions?"
+MEETONE="https://api.meetsweden.org/v2/history/get_actions?"
+Jungle="https://junglehistory.cryptolions.io/v2/history/get_actions?"
+Jungle_eosusa="https://jungle.eosusa.news/v2/history/get_actions?"
+jungle_eossweden="https://jungle.eossweden.org/v2/history/get_actions?"
+Aikon="https://ore.eosusa.news/v2/history/get_actions?"
+
+history_link=$EOSsweden
+
 end="$(date -d "$end_dtg" "+%s")"
 start="$(date -d "$start_dtg" "+%s")"
 
@@ -23,7 +35,7 @@ while [[ "$start" < "$end" ]]; do
         a="$(date -d @"$start" +"%Y-%m-%dT%H:%M:%S")"
         b="$(date -d @"$start1" +"%Y-%m-%dT%H:%M:%S")"
 
-get_transaction="$(curl -X GET "https://api.eossweden.org/v2/history/get_actions?account=$account&after=$a&before=$b" -H "accept: application/json")"
+get_transaction="$(curl -X GET "$history_link&account=$account&after=$a&before=$b" -H "accept: application/json")"
 start="$(($start + $steap))"
 done
 
