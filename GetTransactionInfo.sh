@@ -48,6 +48,8 @@ for row in $(echo "${get_transaction}" | jq -r '.actions[] | @base64'); do
 done
 
 let "net_sum=net_sum*8"
+echo "$history_link :"
 echo "Total CPU: $cpu"
 echo "Total NET: $net"
+
 
