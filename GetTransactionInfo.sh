@@ -35,7 +35,7 @@ while [[ "$start" < "$end" ]]; do
         b="$(date -d @"$start1" +"%Y-%m-%dT%H:%M:%S")"
 #get_transaction="$(curl -X GET "https://api.eossweden.org/v2/history/get_actions?filter=prometheusup%3A%2A&after=$a.782Z&before=$b.782Z" -H "accept: application/json")"
 get_transaction="$(curl -s -X GET "$history_link&filter=$account%3A%2A&after=$a&before=$b" -H "accept: application/json")"
-echo $get_transaction
+#echo $get_transaction
 for row in $(echo "${get_transaction}" | jq -r '.actions[] | @base64'); do
     _jq() {
     echo ${row} | base64 --decode | jq -r ${1}
